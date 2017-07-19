@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=gbk"/>
+	<title> new document </title>  
+	<style type="text/css">
+		table{width:1000px;margin:0 auto;}
+		tr{width:100%;height: 30px;}
+		td{text-align: center;width: 33.333%;height: }
+		a{color:#000;text-decoration: none;}
+		a:hover{color:blue;text-decoration: underline;}
+	</style>
+
+	<script type="text/javascript">  
+		window.onload = function()/*页面全部加载完后才会调用函数*/{
+			Highlight();
+		};  
+		function addOne(obj){ 
+			var tbody = document.getElementById('table').lastChild;  /*getElementById("table").lastChild最后一个子标签为什么不是空白标签的问题  tbody默认为最后一个子标签，其后没有空白标签。前面学的是有空白标签的.如:tr下的最后一个子标签就是空白标签.*/
+			var tr = document.createElement('tr');  
+
+			var td = document.createElement("td");
+			td.innerHTML = "<input type='text'/>";
+			tr.appendChild(td);
+
+			td = document.createElement("td");	 
+			td.innerHTML = "<input type='text'/>";
+			tr.appendChild(td);
+
+			td = document.createElement("td");	
+			td.innerHTML = "<a href='javascript:;' onclick='deleteRow(this)'>删除</a>";
+			/*1、它想表达的是伪协议的意思，<a>是一个超链接，这样做的目地是阻止默认事件的发生，会防止链接跳转到其他页面，不同浏览器不同处理，有些会出错的。
+			2、href 属性的值：可以是任何有效文档的相对或绝对 URL，包括片段标识符和 JavaScript 代码段。如果用户选择了 <a> 标签中的内容，那么浏览器会尝试检索并显示 href 属性指定的 URL 所表示的文档，或者执行 JavaScript 表达式、方法和函数的列表。*/
+			tr.appendChild(td);   
+
+			tbody.appendChild(tr);   
+			Highlight();//如果不用函数的话，就必须要注意顺序的问题，因为执行代码是按照顺序来的
+		}
+
+		function deleteRow(obj){
+			var tbody = document.getElementById('table').lastChild;  
+			var tr = obj.parentNode.parentNode;
+			tbody.removeChild(tr);
+		}
+		function Highlight(){
+			var tbody = document.getElementById('table').lastChild;	
+			trs = tbody.getElementsByTagName('tr');   
+			for(var i =1;i<trs.length;i++){
+				trs[i].onmouseover = function(){
+					this.style.backgroundColor ="#f2f2f2";//this是获取当前的元素，当你把this改成trs[i]之后，获取不到鼠标现在滑过的元素了。
+				}; 
+				trs[i].onmouseout = function(){
+					this.style.backgroundColor ="#fff";
+					/*还可以用这种方法   trs[i].setAttribute("onmouseover","style.backgroundColor='#ccc'");
+					trs[i].setAttribute("onmouseout","style.backgroundColor='#fff'");*/
+				}; 
+			}  
+		}
+
+	</script> 
+</head> 
+<body> 
+	<table border="1" width="50%" id="table">
+		<tr>
+			<th>学号</th>
+			<th>姓名</th>
+			<th>操作</th>
+		</tr>  
+
+		<tr>
+			<td>xh001</td>
+			<td>王小明</td>
+			<td><a href="javascript:;" onclick="deleteRow(this)">删除</a></td>
+		</tr>
+
+		<tr>
+			<td>xh002</td>
+			<td>刘小芳</td>
+			<td><a href="javascript:;" onclick="deleteRow(this)">删除</a></td>
+		</tr>  
+		<tr>
+			<td>xh003</td>
+			<td>小红</td>
+			<td><a href="javascript:;" onclick="deleteRow(this)">删除</a></td>
+		</tr>
+
+	</table>
+	<input style="margin-left:200px" type="button" value="添加一行" onclick="addOne()" />
+</body>
+</html>

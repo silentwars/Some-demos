@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <style type="text/css">
+    body{
+      background-color: #333;
+    }
+    .bg-div{
+      background-image: url(image/river.jpg);
+      background-repeat: no-repeat;
+      width:1290px;
+      height: 626px;
+      margin:0 auto;
+    }
+    .log{
+      background-image: url(image/logo.png);
+      background-repeat: no-repeat;
+      width:107px;
+      height: 53px;
+      float: left;
+    }
+    .search-box{
+      position:absolute;
+      top:200px;
+      left:300px;
+    }
+    form{
+      background-color: #FFF;
+      padding:5px;
+      margin:8px 0 0 20px;
+      float: left;
+    }
+    .search-input-text{
+      border:0;
+      outline: none;
+      width:350px;
+      height: 29px;
+      line-height: 25px;
+      float: left;
+    }
+    .search-input-button{
+      background-image: url(image/search-button.png);
+      background-repeat: no-repeat;
+      border: 0;
+      width:29px;
+      height: 29px;
+      float: left;
+    }
+    .suggest{
+      display:none;
+      width:388px;
+      border:1px solid #e5e5ee;
+      background-color: #FFF;
+
+    }
+    .suggest ul{
+     list-style: none;
+     margin:0;
+     padding:0;
+   }
+   .suggest ul li{
+     padding:3px;
+     line-height: 25px;
+     font-size: 14px;
+     cursor: pointer;
+   }
+   .suggest ul li:hover{
+     background-color: #e5e5e5;
+     text-decoration: underline;
+   }
+   p{position: absolute;top:290px;left:430px;color:#FFF;line-height: 24px;}
+ </style>
+ <script type="text/javascript">
+  window.onload=function(){
+    addEvent('search_input','keyup',function(){
+     var searchText=getDOM('search_input').value;
+     //1、用的是函数声明的方法，函数声明会被提前，随时可以调用。
+     //2、还是ajaxGet跨域问题。网页中没有反应。
+     ajaxGet('http://api.bing.com/qsonhs.aspx?q='+searchText,function(d){
+       var d=d.AS.Results[0].Suggests;
+       var html='';
+       for(var i=0;i<d.length;i++){
+         html+='<li>'+d[i].Txt+'</li>';
+       }
+       getDOM('search-result').innerHTML=html;
+       getDOM('search-suggest').style.top=getElementTop(getDOM('search-form'))+38+'px';
+       getDOM('search-suggest').style.left=getElementLeft(getDOM('search-form'))+'px';
+       getDOM('search-suggest').style.position='absolute';
+       getDOM('search-suggest').style.display='block';
+     },'json');
+   });
+    delegateEvent('li', 'click', function() {
+     var keyword=this.innerHTML;
+     location.href='http://cn.bing.com/search?q='+keyword;
+   });
+  };
+  
+  
+  function getDOM(id){
+   return document.getElementById(id);
+ }
+    //为什么要使用这种方法，可以为一个DOM绑定多个事件。
+    /*document.getElementById('id').onclick=function(){alert(1)};
+    document.getElementById('id').onclick=function(){alert(2)};
+    这种情况下，只能显示一个时间(第二个)。*/
+    function addEvent(id,event,fn){
+       //当获取的id找不到元素时，为了不报错，就选择了document。
+       var el=getDOM(id)||document;
+       //addEventListener是给元素绑定事件，适用于非IE浏览器。
+       if(el.addEventListener){
+         //传入的参数也是不同的，event可能是click，moveout等事件，fn回调函数。
+         el.addEventListener(event,fn,false);
+         //attachEvent适用于IE浏览器。
+       }else if(el.attachEvent){
+         //只接受前面加的有on事件，如onclick,onkeydown,onkeyup等。
+         el.attachEvent('on'+event,fn);
+       }
+     }
+     function getElementLeft(element){
+       //offsetLeft是获得距离父元素左边的距离(此时的距离是fsearc-form的左边距和search-box的左边距的距离。)
+       var actualLeft=element.offsetLeft;//因为其父元素有绝对定位，所以offsetLeft只能到父元素。
+       var current=element.offsetParent;//是找出其offset下的父元素(指的是其的父元素)。
+       while(current !==null){
+        actualLeft+=current.offsetLeft;
+            current=current.offsetParent;//其父元素的父元素，不断的循环到了body之后，current.offsetParent就为空。之后就停止了循环。。
+          }
+          return actualLeft;
+        }
+        function getElementTop(element){
+         var actualTop=element.offsetTop;
+         var current=element.offsetParent;
+         while(current!==null){
+           actualTop+=current.offsetTop;
+           current=current.offsetParent;
+         }
+         return actualTop;
+       }
+       
+       function ajaxGet(url,callback){
+        var _xhr=null;
+         //建立发送请求的对象，考虑兼容性。
+         if(window.XMLHttpRequest){
+           //在非IE浏览器下使用XMLHttpRequest.
+           _xhr=new window.XMLHttpRequest();
+           //在IE浏览器下使用ActiveXObject。
+         }else if(window.ActiveXObject){
+           _xhr=new ActiveXObject("Msxml2.XMLHTTP");
+         } 
+         
+         _xhr.onreadystatechange=function(){
+           //当readystate==4并且status==200表示服务器正确响应并返回信息。
+           if(_xhr.readyState==4&&_xhr.status==200){
+             //JSON.parse()的作用是把字符串转化为JS可以识别的对象。
+             callback(JSON.parse(_xhr.responseText));
+           }
+           //使用的是Ajax技术，三个参数，第三个是true表示为异步。
+           
+         };
+         _xhr.open('get',url,false);
+         _xhr.send(null);
+       }
+       function delegateEvent(target,event,fn){
+         addEvent(document,event,function(e){
+           if(e.target.nodeName==target.toUpperCase()){
+             fn.call(e.target);
+           }
+         });
+       }
+       
+     </script>
+   </head>
+   <body>
+     <div class="bg-div">
+      <div class="search-box">
+       <div class="log"></div>
+       <form action="http://cn.bing.com/s" target="_blank" method="get" id="search-form">
+        <input type="text" class="search-input-text" name="q" id="search_input" />
+        <input type="submit" class="search-input-button" value="" />
+      </form>
+    </div>
+    <p><span>说明：1、请输入w,能看见效果。</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>2、水平有限未设置服务器端工作，但可用fiddler解决跨域问题。</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>3、根据相关网站进行学习。进行仿制必应搜索框。</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>4、事件代理、DOM操作、Ajax等技术</span>
+    </p>
+  </div>
+  <div class="suggest" id="search-suggest">
+    <ul id="search-result">
+     <li>搜索1</li>
+     <li>搜索2</li>
+     <li>搜索3</li>
+   </ul>
+ </div>
+</body>
+</html>

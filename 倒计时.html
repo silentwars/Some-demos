@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>倒计时练习</title>
+	<style type="text/css">
+		#downtime{
+			background-color: #9c9c9c;
+			width: 800px;
+			height: 40px;
+			font-size:30px;
+			text-align: center;
+			margin:300px auto;
+		} 
+
+	</style>
+	<script type="text/javascript">
+		window.onload=function(){
+			Gundong();
+		};
+		function Gundong(){
+			var curtime=new Date(),	
+			endtime=new Date("2017,12,31"),
+			lefttime=parseInt(((endtime.getTime()-curtime.getTime())/1000)),
+			d=parseInt(lefttime/(60*60*24)),
+			h=parseInt(lefttime/(60*60)%24),
+			m=parseInt(lefttime/60%60),
+			s=parseInt(lefttime%60);
+			m=checked(m);
+			s=checked(s);
+			downtime=document.getElementById('downtime');
+			console.log(lefttime);
+			downtime.innerHTML="距离2017年结束还有："+d+'天'+h+'时'+m+'分'+s+'秒';
+			var tiemr=null;
+			timer=setTimeout('Gundong()',1000);
+		}
+		function checked(i){
+			if(i<10){
+				i="0"+i;
+			}
+			return i;
+		}
+	</script>
+</head>
+<body>
+	<div id="downtime">倒计时的时间显示</div>
+</body>
+</html>

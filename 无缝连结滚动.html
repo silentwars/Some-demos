@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"> 
+	<title>无缝滚动</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			text-align: center;
+			font-size: 12px;
+			line-height: 24px;
+		}
+		ul{
+			list-style: none;
+		}
+		a{
+			color: #000;
+			text-decoration: none;
+		}
+		a:hover{
+			color: #00f;
+		}
+		#bigBox{
+			width: 400px;
+			border:5px solid #ababab;
+			border-radius: 15px;
+			margin: 50px auto 0;
+			text-align:left;
+              /* -moz-border-radius:15px;
+               -webkit-border-radius:15px;
+               box-shadow: 2px 2px 10px #ababab;*/
+             }
+             #topBox{
+              font-size: 26px;
+              height: 62px;
+              line-height: 62px;
+              overflow: hidden;
+              text-align: center;
+              color: #fff;
+              background: #f00;
+              position: relative;
+              border:1px solid #f00;
+              border-radius:8px 8px 0 0;
+
+            }
+            #topBox a{
+              position: absolute;/*父级relative子级absolute可具体定位*/
+              top:0;
+              right: 10px;
+              font-size: 14px;
+              display: inline;
+              color: #fff;
+            }
+            #topBox a:hover{
+              color: #00f;
+            }
+            #bottomBox{
+              width: 335px;
+              height: 195px;
+              /*height: 144px;*/
+              margin-left: 25px;
+              margin-top: 10px;
+              overflow: hidden;
+            }
+            #bottomBox ul li{
+              height: 24px;
+            }
+            #bottomBox ul li a{
+              width: 180px;
+              height: 24px;
+              text-indent: 15px;
+           	/* float: left;
+           	display: block;
+           	overflow: hidden;  */
+           }
+           #bottomBox ul li span{
+           	float: right;
+           	color: #999;
+           }
+         </style>
+
+       </head>
+       <body>
+        <div id="bigBox">
+         <div id="topBox">
+          <span class="logCont">无缝连结滚动</span><a href="#">更多&gt;&gt;</a>
+        </div>
+        <div id="bottomBox">
+          <ul id="cont1">
+           <li><a href="#">1.无缝连结滚动，小样快点滚起来吧。</a><span>2013-09-18</span></li>
+           <li><a href="#">2.无缝连结滚动，小样快点滚起来吧。</a><span>2013-10-09</span></li>
+           <li><a href="#">3.无缝连结滚动，小样快点滚起来吧。</a><span>2013-10-21</span></li>
+           <li><a href="#">4.无缝连结滚动，小样快点滚起来吧。</a><span>2013-11-01</span></li>
+           <li><a href="#">5.无缝连结滚动，小样快点滚起来吧。</a><span>2013-11-06</span></li>
+           <li><a href="#">6.无缝连结滚动，小样快点滚起来吧。</a><span>2013-11-08</span></li>
+           <li><a href="#">7.无缝连结滚动，小样快点滚起来吧。</a><span>2013-11-15</span></li>
+           <li><a href="#">8.无缝连结滚动，小样快点滚起来吧。</a><span>2013-11-22</span></li>
+           <li><a href="#">9.无缝连结滚动，小样快点滚起来吧。</a><span>2013-12-06</span></li>
+         </ul>
+         <ul id="cont2"></ul>
+       </div>
+       </div>
+     </body>
+   <script type="text/javascript"> 
+     var bottomBox=document.getElementById('bottomBox');
+     var cont1=document.getElementById('cont1');
+     var cont2=document.getElementById('cont2');
+     cont2.innerHTML=cont1.innerHTML;
+     var time=50;
+     var myScroll=setInterval(scrollUp,time);
+
+     cont1.onmouseover=function(){
+      clearInterval(myScroll);
+    };
+     cont1.onmouseout=function(){
+       myScroll=setInterval(scrollUp,time);
+     };
+
+    function scrollUp(){
+      if(bottomBox.scrollTop>=cont1.offsetHeight){
+        bottomBox.scrollTop=0;
+      }else{
+        bottomBox.scrollTop++;
+      }
+    }
+
+           //每隔24px，且为2秒，即过了两秒就要执行4*24px；但和onmouseover等冲突
+       /* function scrollUp(){
+          if(area.scrollTop>= con1.offsetHeight){
+            area.scrollTop = 0;
+          }
+          else if((area.scrollTop%24)==0){
+            setTimeout('area.scrollTop ++',2000);            
+          }
+          else{
+            area.scrollTop ++;
+          } 
+        }*/
+        
+       /*  向下滚动
+        function scrollDown(){  
+        	if(area.scrollTop==0) {
+        		area.scrollTop = con1.offsetHeight;
+        	}else{
+        		area.scrollTop --; 
+        	} 
+        }*/
+
+      </script>
+      </html>

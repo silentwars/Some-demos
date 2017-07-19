@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>网页定位导航特效-原生jq编写</title>
+	<style type="text/css">
+		*{
+			margin:0;
+			padding:0;
+		}
+		body{
+			font-size:12px;
+			line-height: 1.7;
+		}
+		li{
+			list-style: none;
+		}
+		#content{
+			width:800px;
+			margin:0 auto;
+			padding:20px;
+			
+		}
+		#content h1{
+			color:#0088bb;
+		}
+	    #content .item{
+	    	padding:20px;
+	    	border:2px dotted #08b;
+	    	margin-bottom: 20px;
+	    }
+	    #content .item h2{
+	    	font-size: 16px;
+	    	font-weight: bold;
+	    	margin-bottom: 20px;
+	    	border-bottom: 2px solid #08b;
+	    }
+	    #content .item li{
+	    	display: inline;
+	    	margin-right:10px;
+	    }
+	    #content .item li a img{
+	    	width:230px;
+	    	height: 230px;
+	    	border:none;
+	    }
+        #menu{
+        	position:fixed;
+        	top:100px;
+        	/*此处具有一定的技巧性，先将其置于中部，再和content相隔400px*/
+        	left:50%;
+        	margin-left:400px;
+        }
+        #menu ul li a{
+        	display: block;
+        	font-size:14px;
+        	font-weight: bold;
+            color:#333;
+            width:80px;
+            height:50px;
+            margin:5px 0;
+            line-height: 50px;
+            text-decoration: none; 
+            text-align:center; 
+
+
+        }
+         #menu ul li a:hover,
+         #menu ul li a.current{
+         	color:#fff;
+         	background-color:#08b;
+         }
+         /*兼容性测试*/
+         /*兼容IE6浏览器*/
+         *html,#html body{
+         	/*IE6 hack*/
+         	background-image:url(about:blank);
+         	background-attachment:fixed;  
+         }
+         
+         *html #menu{
+         	/*position:fixed;*/
+         	position:absolute;
+         	top:expression(((e=document.documentElement.scrollTop)?e:document.body.scrollTop)+100+'px');
+         }
+	</style>
+	<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.js"></script>
+	<script >
+		$(document).ready(function(){
+         //滚动条发生滚动
+         $(window).scroll(function(event) {
+         	/* Act on the event */
+         	//滚动条距顶部的位置
+         	var top=$(document).scrollTop();
+            //jQuery通过ID来获取元素的效率要比通过class来获取的高很多
+            var menu=$("#menu");
+            var items=$("#content").find(".item");
+            var currentId="";//当前所在楼层的(item)的id。
+            items.each(function(){
+            var m=$(this);
+            var itemTop=m.offset().top;
+            if(top>itemTop-270){
+            	//currentId是一个id值.
+            	currentId="#"+m.attr("id");
+            }else{
+            	return false;//条件不满足时跳出循环，提高效率，节省判断时间。
+            }
+
+            });
+         	//给对应的楼层添加class="current"的样式，取消其他链接的current。
+         	var currentLink=menu.find(".current");//找到当前的链接位置所在的元素。
+         	//1、判断当前的currentId是否有值，currentId最开始是没有赋值的
+         	//2、判断当前元素currentLink的属性href，是否等于当前的currentId,即现在的class="current"位置和当前id获取的元素是同一元素。
+         	//currentId获取的是哪个元素的Id值，currentLink获取的是元素。
+         	if(currentId&&currentLink.attr("href")!=currentId){
+                currentLink.removeClass("current");
+                menu.find("[href="+currentId+"]").addClass("current");
+         	}
+         });
+
+
+		});
+
+	</script>
+</head>
+<body>
+	<div id="menu">
+		<ul>
+			<li><a href="#item1" class="current">1F 男装</a></li>
+			<li><a href="#item2">2F 女装</a></li>
+			<li><a href="#item3">3F 美妆</a></li>
+			<li><a href="#item4">4F 数码</a></li>
+			<li><a href="#item5">5F 母婴</a></li>
+		</ul>
+	</div>
+	<div id="content">
+		<h1>购物网</h1>
+		<div id="item1" class="item">
+			<h2>1F 男装</h2>
+			<ul>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/1F.jpg" alt=""></a></li>
+			</ul>
+		</div>
+		<div id="item2" class="item">
+			<h2>2F 女装</h2>
+			<ul>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/2F.jpg" alt=""></a></li>
+			</ul>
+		</div>
+		<div id="item3" class="item">
+			<h2>3F 美妆</h2>
+			<ul>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/3F.jpg" alt=""></a></li>
+			</ul>
+		</div>
+		<div id="item4" class="item">
+			<h2>4F 数码</h2>
+			<ul>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+				<li><a href="#"><img src="image/4F.png" alt=""></a></li>
+			</ul>
+		</div>
+		<div id="item5" class="item">
+			<h2>5F 母婴</h2>
+			<ul>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+				<li><a href="#"><img src="image/5F.jpg" alt=""></a></li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript">
+		window.onload=function(){
+			showtime();//如果使用setInterval(showtime,1000)，会有文本的显示，或延迟一秒显示。        
+		}
+		function checktime(i){
+			if(i<10){
+				i="0"+i;
+			}  /*else{i=i;}   可以不要*/			
+			return i;
+		}
+		function showtime(){
+			var mydate=new Date(),
+			myy=mydate.getFullYear(),
+			mym=mydate.getMonth()+1,
+			myd=mydate.getDate(),
+			myh=mydate.getHours(),
+			mymi=mydate.getMinutes(),
+			mys=mydate.getSeconds(),
+			weekdays=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+			myxin=mydate.getDay();
+			myw=weekdays[myxin];
+			mymi=checktime(mymi);
+			mys=checktime(mys);
+			document.getElementById('div1').innerHTML=myy+'年'+mym+'月'+myd+'日'+'&nbsp'+myw+ '&nbsp'+myh+':'+mymi+':'+mys;
+			setTimeout(showtime,1000);
+		}
+	</script>
+</head>
+<body>
+	<div  id="div1">
+	显示时间
+	</div>
+</body>
+</html>

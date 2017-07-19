@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>下拉菜单，绑定鼠标和keyup事件</title>
+  <style type="text/css">
+    body,ul,li{ margin:0; padding:0; font-size:13px;}
+    ul,li{list-style:none;}
+    #divselect{width:186px; margin:80px auto; position:relative; z-index:2;}
+    #divselect cite{width:150px; height:24px;line-height:24px; display:block; color:#807a62; cursor:pointer;font-style:normal;
+      padding-left:4px; padding-right:30px; border:1px solid #333333; 
+    }
+    #divselect ul{width:184px;border:1px solid #333333; background-color:#ffffff; position:absolute; z-index:3; margin-top:-1px; display:none;}
+    #divselect ul li{height:24px; line-height:24px;}
+    #divselect ul li a{display:block; height:24px; color:#333333; text-decoration:none; padding-left:10px; padding-right:10px;}
+  </style>
+  <script type="text/javascript">
+    window.onload=function(){
+      var box=document.getElementById('divselect'),
+      title=box.getElementsByTagName('cite')[0],
+      menu=box.getElementsByTagName('ul')[0],
+      as=box.getElementsByTagName('a'),
+      index=-1,
+      e=null;
+      
+      title.onclick=function(event){
+      // 执行脚本，还有防止冒泡
+      event=event||window.event;
+      if(event.stopPropagation){
+        event.stopPropagation();
+      }else{
+        event.cancelBubble=true;
+      }
+      var menu=box.getElementsByTagName('ul')[0];
+      menu.style.display='block';
+    };  
+    
+   // 滑过滑过、离开、点击每个选项时
+      // 执行脚本      
+      for(var i=0,l=as.length;i<l;i++){(function(e){
+        //通过e传入函数执行位置
+        as[i].onmouseover=function(){
+        //并将e赋值给index
+        index=e;
+        //引入j，解决按向上、向下与鼠标一移入后背景色的冲突
+        for (var j = 0; j<as.length;j++) {
+         if(j!=i){
+          as[j].style.background='#fff';
+        }               
+      }            
+      this.style.background='#eee';
+    };
+     //鼠标移出
+     as[i].onmouseout=function(){
+      this.style.background='#fff';
+    };
+    //鼠标点击
+    as[i].onclick=function(event){
+      event=event||window.event;
+      if(event.stopPropagation){
+        event.stopPropagation();
+      }else{
+        event.cancelBubble=true;
+      }
+      title.innerHTML=this.innerHTML;
+      menu.style.display='none';
+    };   
+  })(i);//采用闭包和自执行函数获取i的实时值，包闭：用函数包装出一个作用域保存住i当前值
+}
+   // 点击页面空白处时
+   document.onclick=function(){
+     menu.style.display='none';
+   };
+      //按向上、向下键是触发的事件
+      document.onkeyup=function(event){
+        event=event||window.event;
+        if(event.stopPropagation){
+          event.stopPropagation();
+        }else{
+          event.cancelBubble=true;
+        }
+        //在先用了鼠标移入事件后，将背景色全部清除，解决按下上、下键背景色冲突
+        for(var i=0,l=as.length;i<l;i++){
+          as[i].style.background='#FFF';
+        }
+        //按下向上的按键触发的事件
+        if(event.keyCode==38){
+          if(index<=0){
+            index=as.length;
+          }
+          index=index-1;
+          as[index].style.background='#eee';
+        }
+        //按下向下键
+        if(event.keyCode==40){
+          if(index>=as.length-1){
+            index=-1;
+          }
+          index=index+1;
+          as[index].style.background='#eee';
+        }
+        //按下enter，进行选取
+        if(event.keyCode==13){
+         title.innerHTML=as[index].innerHTML;
+         menu.style.display='none';
+       }
+     };
+   };
+ </script>
+</head>
+<body>
+  <div id="divselect">
+    <cite>请选择分类</cite>
+    <ul>
+     <li id="li"><a href="javascript:;" selectid="1">ASP开发</a></li>
+     <li><a href="javascript:;" selectid="2">.NET开发</a></li>
+     <li><a href="javascript:;" selectid="3">PHP开发</a></li>
+     <li><a href="javascript:;" selectid="4">Javascript开发</a></li>
+     <li><a href="javascript:;" selectid="5">Java特效</a></li>
+   </ul>
+ </div>
+</body>
+</html>
+
+<!-- <cite>闭包什么的，说得高深，只要你理会它就没什么高深的了
+这儿你不管什么闭包，仅仅抓住“事件发生时i的值”，你就什么都清楚了，点击事件发生时，for循环必然是执行完了的，而for语句没有独立作用域，把写法等价转换一下就好理解了：
+window.onload=function(){
+    var aLi=document.getElementsByTagName('li');
+    var i;
+    for(i=0;i<aLi.length;i++){
+        aLi[i].onclick=function(){
+            alert(i);
+        }
+    }
+}
+这不就清楚了？
+要保留住循环时的i值，也不用理会闭包。按照代码逻辑理解就可以了：
+
+window.onload=function(){
+    var aLi=document.getElementsByTagName('li');
+    for(var i=0;i<aLi.length;i++){
+        aLi[i].onclick=(function(i){
+            var i = i;  //这儿是另一个函数，另一个作用域，这个i与for循环里面的i是不同的变量了，所以其不会受for循环里面i的变化的影响，在返回的函数执行时，它仍然是被赋值时的那个值，而其赋值的时间是循环执行时，故是当时的值
+            return function(){
+                alert(i);
+            }
+        })(i);
+    }
+}
+理解了就无所谓闭包了，换种写法一样ok，如下：
+window.onload=function(){
+    var aLi=document.getElementsByTagName('li');
+    var i;
+    for(i=0;i<aLi.length;i++){
+        aLi[i].index=i;
+        aLi[i].onclick=function(){
+            alert(this.index);//this.index代表此时i在循环时的当前值
+        }
+    }
+} </cite>-->

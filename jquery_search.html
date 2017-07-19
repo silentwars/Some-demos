@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- 解决浏览器的兼容性问题。浏览器的文档模式是以最新版本的IE文档模式进行渲染。记住就好 -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>仿必应搜索框jQuery(Ajax)</title>
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<style type="text/css">
+		body{
+			background-color: #333;
+		}
+		.bg-div{
+			background-image: url(image/river.jpg);
+			width:1290px;
+			height: 626px;
+			margin:0 auto;
+			position: relative;			
+		}
+		.search-box{
+			/* 1、这里的定位是相对于整个页面来定位的(body) 
+			2、也可以相对于背景图片定位bc-div*/
+			position:absolute;
+			top:200px;
+			left:300px;
+		}
+		.log{
+			background-image: url(image/logo.png);
+			background-repeat:no-repeat;
+			width:107px;
+			height: 53px;
+			float:left;
+
+		}
+		form{
+			
+			background-color: #fff;
+			padding:5px;
+			margin:8px 0 0 20px;
+			float:left;
+		}
+
+		.search-input-text{
+			border: none;
+			float:left;
+			width:350px;
+			height: 25px;
+			line-height: 25px;
+			outline: none;
+		}
+		.search-input-button{
+			border:none;
+			background-image: url(image/search-button.png);
+			width:29px;
+			height: 29px;
+			background-repeat:no-repeat; 
+			outline: none;
+			cursor:pointer;
+			float:left;
+		}
+		.suggest{
+			width:388px;
+			border:1px solid #999;
+			background-color: #FFF;
+		}
+		.suggest ul{
+			list-style: none;
+			margin:0;
+			padding:0;
+		}
+		.suggest ul li{
+			padding:3px;
+			font-size: 14px;
+			line-height: 25px;
+			cursor: pointer;
+
+		}
+		.suggest ul li:hover{
+			text-decoration: underline;
+			background-color:#e5e5e5; 
+		}
+		p{position: absolute;top:290px;left:430px;color:#FFF;line-height: 24px;}
+	</style>
+	<script type="text/javascript">
+		$(window).on('load',function(){
+			$('#search_input').bind('keyup',function(){
+				var searchText=$("search_input").val();
+				$.get("http://api.bing.com/qsonhs.aspx?q="+searchText,function(d){
+					//从服务器上返回的内容。
+					var d=d.AS.Requests[0].Suggests;
+					var html='';
+					for(var i=0;i<d.length;i++){
+						html+='<li>'+d[i].Txt+'</li>';
+					}
+					$("#search-result").html(html);
+					$('#search-suggest').show().css({
+						top:$('#search-form').offset().top+$('#search-form').height()+10,
+						left:$('#search-form').offset().left,
+						position:'absolute'
+					});
+				},'json');
+			});
+			//事件代理：一般是绑定在元素的父元素上，因为这个元素需要动态添加之后才能使用。
+			//事件代理：要对多个元素绑定相同的事件，且这些元素是由js代码动态生成的。一般使用事件代理
+			$(document).delegate('li', 'click', function() {
+				var keyword=$(this).text();
+				location.href='http://cn.bing.com/search?q='+keyword;
+			});
+			$(document).bind('click',function(){
+				$('#search-suggest').hide(); 
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="bg-div">
+		<div class="search-box">
+			<div class="log"></div>
+			<form action="http://cn.bing.com/" target="_blank" method="get" id="search-form">
+				<input type="text"  class="search-input-text"  name="q" id="search_input" />
+				<input type="submit" class="search-input-button" value="" />
+			</form>
+		</div>
+		<p><span>说明：1、请输入w,能看见效果。</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>2、水平有限未设置服务器端工作，但可用fiddler解决跨域问题。</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>3、根据相关网站进行学习。进行仿制必应搜索框。</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>4、事件代理、DOM操作、Ajax等技术</span>
+		</p>
+	</div>
+	<div class="suggest" id="search-suggest" style="display: none">
+		<ul id="search-result">
+			<li>搜索1</li>
+			<li>搜索2</li>
+			<li>搜索3</li>
+		</ul>
+	</div>
+</body>
+</html>
